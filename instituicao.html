@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SancaFlow</title>
     <link rel="stylesheet" href="global.css">
 </head>
+
 <body>
     <main>
         <div class="text">
@@ -13,20 +15,62 @@
         </div>
         <div class="form">
             <form action="#" method="post">
-                <input type="text" placeholder="Nome da Instituição">
-                <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18">
-                <input type="submit" value="Enviar">
+                <input type="text" placeholder="Nome da Instituição" required>
+                <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18" required>
+                <input type="text" placeholder="Endereço" required>
+                <input type="text" placeholder="CEP" required>
+                <input type="text" placeholder="Telefone" required>
+                <input id="submit" type="submit" value="Enviar">
             </form>
         </div>
         <div class="table">
+            <h2>Instituições Cadastradas</h2>
+
             <table>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
+                <thead>
+                    <tr>
+                        <th>Nome da Instituição</th>
+                        <th>CNPJ</th>
+                        <th>Endereço</th>
+                        <th>CEP</th>
+                        <th>Telefone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hospital Santa Luzia</td>
+                        <td>12.345.678/0001-90</td>
+                        <td>Rua das Flores, 123</td>
+                        <td>01234-567</td>
+                        <td>(11) 98888-7777</td>
+                    </tr>
+                    <tr>
+                        <td>Escola Saber Mais</td>
+                        <td>98.765.432/0001-10</td>
+                        <td>Av. Central, 500</td>
+                        <td>04555-000</td>
+                        <td>(11) 4002-8922</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </main>
+    <script>
+        function mascaraCNPJ(input) {
+            let value = input.value;
+
+            // Remove tudo o que não for dígito
+            value = value.replace(/\D/g, "");
+
+            // Aplica a formatação progressivamente
+            value = value.replace(/^(\d{2})(\d)/, "$1.$2");
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+            value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
+            value = value.replace(/(\d{4})(\d)/, "$1-$2");
+
+            input.value = value;
+        }
+    </script>
 </body>
+
 </html>

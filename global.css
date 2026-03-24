@@ -1,6 +1,7 @@
 *{
     margin: 0 auto;
     padding: 0px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 header{
@@ -26,10 +27,89 @@ a{
     text-decoration: none;
     color: aliceblue;
 }
-
+main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 56px
+    ;
+}
 iframe{
     border: none;
     width: 100vw;
     height: 100vh;
     padding: 20px;
+}
+
+h1{
+    font-family: Arial, Helvetica, sans-serif;
+    size: 36px;
+}
+
+.form{
+    width: 60vw;
+    padding: 24px;
+    border-radius: 16px;
+    background-color: orange;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+input{
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #019DFF;
+    border-radius: 16px;
+}
+#submit{
+    background-color: #019DFF;
+    color: #fff;
+    width: 100%;
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+}
+
+thead tr {
+    background-color: #009dff; /* O azul do seu botão Enviar */
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+th, td {
+    padding: 12px 15px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+tbody tr:last-of-type {
+    border-bottom: 2px solid #009dff;
+}
+
+/* Efeito de destaque ao passar o mouse */
+tbody tr:hover {
+    background-color: #fdf2e2; /* Um laranja bem clarinho */
 }
