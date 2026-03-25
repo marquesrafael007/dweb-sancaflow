@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SancaFlow</title>
+    <link rel="stylesheet" href="global.css">
+</head>
+<body>
+    <main>
+        <div class="text">
+            <h1>Locais</h1>
+        </div>
+        <div class="form">
+            <form action="#" method="post">
+                <input type="text" placeholder="Nome do Local">
+                <input type="text" id="rua" placeholder="Rua">
+                <input type="number" placeholder="Nº">
+                <input type="text" id="bairro" placeholder="Bairro">
+                <input type="text" id="cidade" placeholder="Cidade">
+                <input type="text" id="cep" placeholder="CEP">
+
+                <input type="submit" value="Enviar">
+            </form>
+        </div>
+        <div class="table">
+            <table>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+                <tr></tr>
+            </table>
+        </div>
+    </main>
+    <script>
+
+        document.getElementById("cep").addEventListener("blur", function() {
+        
+            let cep = this.value.replace(/\D/g, '');
+        
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+        
+                document.getElementById("rua").value = data.logradouro;
+                document.getElementById("bairro").value = data.bairro; 
+                document.getElementById("cidade").value = data.localidade;
+            });
+        
+        });
+        
+        </script>
+</body>
+</html>
