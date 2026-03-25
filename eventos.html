@@ -1,41 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SancaFlow</title>
-    <link href="global.css" rel="stylesheet">
-  </head>
-  <body>
-  <form>
-        
-    <div class="">
-      <img id previewImg href=img>
-       <label for="imageUpload">Selecionar Image:</label>
-       <input type="file" name="image" id="imageUpload" accept="image/*">
-    </div>
-    
-    <div class="">
-        
-        <div class=""><label>Nome do evento: <input type="text"></label></div>
-        <div class=""><label>Instituição responsável: </label></div>
-        <div class=""><label>Endereço: </label></div>
-        <div class><label>Responsável: </label></div>
-        <div><label>Data: <input type="date" id="data" placeholder=> </label></div>
+    <link rel="stylesheet" href="global.css">
+    <style>
+        img {
+       width: 150px;
+       height: 150px;
+       border: 2px dashed #aaa;
+       border-radius: 10px;
+       display: flex;
+       justify-content: center;
+       align-items: center;
 
+       font-size: 40px;
+       color: #666;
 
+       cursor: pointer;   
+    }
+    </style>
+</head>
 
+<body>
+    <main>
+        <div class="text"><h1>Novo evento</h1></div>
 
+            <div class="form">
+                <form action="#" method="post">
+                    
+                    <label class="upload-box" for="img" >
+                        Adicionar imagem:
+                        <img id="preview" src="" hidden>
+                    </label>
 
+                        <input type="file" id="img" hidden> 
+                        <input type="text" id="description" name="description" placeholder="Descrição" maxlength="300" required>
+                        <input type="text" id="Address" placeholder="Endereço" required>
+                        <input type="text" id="Institution" placeholder="Instituição" required>
+                        <input type="text" id="responsible" placeholder="Responsáveis pelo evento">
+                        <input type="text" id="contact" placeholder="Contato" required>
+                        <input type="date" id="date" placeholder="Data" required>
+                        <input type="time" id="time" placeholder="Horário" required>
+                        <input type="number" id="price" placegolder="Valor(se houver)" step="0.01" inputmode="decimal">
+            
+                        <input id="submit" id="" type="submit" value="Enviar">
+                
+                </form>
+            </div>
 
-
-    </div>
-  </form>
-
-  <script
-  var img = document.getElementById('imageUploada');
-  var preview = document.
-
-  <script>
-  </body>
+     </main>
+</body>
 </html>
+

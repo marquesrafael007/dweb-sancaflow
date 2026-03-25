@@ -104,12 +104,10 @@ tbody tr {
 tbody tr:nth-of-type(even) {
     background-color: #f3f3f3;
 }
-
-tbody tr:last-of-type {
-    border-bottom: 2px solid #009dff;
+tbody tr:last-of-type { border-bottom: 2px solid #009dff;
 }
 
 /* Efeito de destaque ao passar o mouse */
 tbody tr:hover {
     background-color: #fdf2e2; /* Um laranja bem clarinho */
-}
+
