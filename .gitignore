@@ -1,0 +1,10 @@
+# Node modules (pasta pesada que não deve subir)
+node_modules/
+
+# Arquivo de configuração sensível (SEU SEGREDO)
+.env
+
+# Arquivos de log e cache do sistema
+npm-debug.log*
+.DS_Store
+.vercel

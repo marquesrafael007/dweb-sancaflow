@@ -16,8 +16,7 @@
         <div class="form">
             <form id="formInstituicao">
                 <input type="text" id="nome" placeholder="Nome da Instituição" required>
-                <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="18" oninput="mascaraCNPJ(this)"
-                    required>
+                <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="18" required>
                 <input type="text" id="endereco" placeholder="Endereço" required>
                 <input type="text" id="cep" placeholder="CEP" required>
                 <input type="text" id="telefone" placeholder="Telefone" required>
@@ -39,7 +38,9 @@
             </table>
 
             <script>
-                const API_URL = 'http://localhost:3000/instituicao';
+                const API_URL = window.location.origin.includes('localhost')
+                    ? 'http://localhost:3000/api/instituicao'
+                    : '/api/instituicao';
 
                 // 1. Função para enviar os dados do formulário
                 document.getElementById('formInstituicao').addEventListener('submit', async (e) => {
@@ -83,32 +84,64 @@
 
                         dados.forEach(inst => {
                             const linha = `
-                    <tr>
-                        <td>${inst.Nome}</td>
-                        <td>${inst.CNPJ}</td>
-                        <td>${inst.Endereço || inst.Endereco}</td> 
-                        <td>${inst.CEP}</td>
-                        <td>${inst.Telefone}</td>
-                    </tr>
-                `;
+                            <tr>
+                            <td>${inst.Nome}</td>
+                            <td>${inst.CNPJ}</td>
+                            <td>${inst.Endereço || inst.Endereco}</td> 
+                            <td>${inst.CEP}</td>
+                            <td>${inst.Telefone}</td>
+                            <td>
+                                <button onclick="prepararEdicao('${inst.id}', '${inst.Nome}')" style="background: #ffc107;">Editar</button>
+                                <button onclick="excluirInstituicao('${inst.id}')" style="background: #dc3545; color: white;">  Excluir</button>
+                            </td>
+                            </tr>
+                        `;
                             corpoTabela.innerHTML += linha;
                         });
                     } catch (error) {
                         console.error('Erro ao carregar tabela:', error);
                     }
                 }
+                // FUNÇÃO PARA EXCLUIR
+                async function excluirInstituicao(id) {
+                    if (!confirm('Tem certeza que deseja excluir esta instituição?')) return;
 
-                // 3. Mascara de CNPJ (Sua função original)
-                function mascaraCNPJ(input) {
-                    let value = input.value.replace(/\D/g, "");
-                    value = value.replace(/^(\d{2})(\d)/, "$1.$2");
-                    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-                    value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
-                    value = value.replace(/(\d{4})(\d)/, "$1-$2");
-                    input.value = value;
+                    try {
+                        const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                        if (response.ok) {
+                            alert('Excluído!');
+                            carregarInstituicoes(); // Recarrega a lista
+                        }
+                    } catch (error) {
+                        console.error('Erro ao deletar:', error);
+                    }
                 }
 
-                // Carregar os dados assim que abrir a página
+                // FUNÇÃO PARA EDITAR (Simples)
+                async function prepararEdicao(id, nomeAtual) {
+                    const novoNome = prompt("Digite o novo nome para: " + nomeAtual);
+                    const novoCNPJ = prompt("Digite o novo CNPJ para: " + nomeAtual);
+                    const novoEndereco = prompt("Digite o novo Endereço para: " + nomeAtual);
+                    const novoCEP = prompt("Digite o novo CEP para: " + nomeAtual);
+                    const novoTelefone = prompt("Digite o novo Telefone para: " + nomeAtual);
+                    if (!novoNome) return;
+
+                    try {
+                        const response = await fetch(`${API_URL}/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ Nome: novoNome, CNPJ: novoCNPJ, Endereço: novoEndereco, CEP: novoCEP, Telefone: novoTelefone }) // Aqui você pode expandir para editar todos os campos
+                        });
+
+                        if (response.ok) {
+                            alert('Nome atualizado!');
+                            carregarInstituicoes();
+                        }
+                    } catch (error) {
+                        console.error('Erro ao editar:', error);
+                    }
+                }
+
                 carregarInstituicoes();
             </script>
 </body>

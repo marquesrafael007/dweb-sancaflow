@@ -20,7 +20,7 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // ROTA POST: Para inserir uma nova instituição
 app.post('/instituicao', async (req, res) => {
@@ -46,7 +46,7 @@ app.post('/instituicao', async (req, res) => {
         .insert([{
             Nome: Nome,
             CNPJ: CNPJ,
-            Endereco: Endereco, // Verifique se no Supabase a coluna tem acento ou não!
+            "Endereço": Endereco, // Verifique se no Supabase a coluna tem acento ou não!
             CEP: CEP,
             Telefone: Telefone
         }]);
@@ -71,6 +71,36 @@ app.get('/instituicao', async (req, res) => {
     return res.status(200).json(data); // Retornamos os dados que vieram do banco
 });
 
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`);
+app.delete('/instituicao/:id', async (req, res) => {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+        .from('Instituições')
+        .delete()
+        .eq('id', id); // Filtra pelo ID da linha
+
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json({ message: 'Excluído com sucesso!' });
 });
+
+// ROTA PUT: Editar dados de uma instituição
+app.put('/instituicao/:id', async (req, res) => {
+    const { id } = req.params;
+    const { Nome, CNPJ, Endereço, CEP, Telefone } = req.body;
+
+    const { data, error } = await supabase
+        .from('Instituições')
+        .update({
+            Nome,
+            CNPJ,
+            "Endereço": Endereço,
+            CEP,
+            Telefone
+        })
+        .eq('id', id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json({ message: 'Atualizado com sucesso!', data });
+});
+
+module.exports = app;
