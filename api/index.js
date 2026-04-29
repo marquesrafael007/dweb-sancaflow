@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
@@ -9,12 +10,15 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
+// ✅ SERVIR ARQUIVOS ESTÁTICOS
+app.use(express.static(path.join(__dirname, '../')));
+
 app.get('/', (req, res) => {
-    res.json({ message: "Success" });
+    res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 // ROTA POST: Para inserir uma nova instituição
-app.post('/instituicao', async (req, res) => {
+app.post('/api/instituicao', async (req, res) => {
     console.log("Corpo recebido:", req.body);
 
     const { Nome, CNPJ, Endereço, CEP, Telefone } = req.body;
@@ -36,7 +40,7 @@ app.post('/instituicao', async (req, res) => {
 });
 
 // ROTA GET: Para listar as instituições
-app.get('/instituicao', async (req, res) => {
+app.get('/api/instituicao', async (req, res) => {
     const { data, error } = await supabase
         .from('Instituições')
         .select('*');
@@ -49,7 +53,7 @@ app.get('/instituicao', async (req, res) => {
 });
 
 // ROTA DELETE
-app.delete('/instituicao/:id', async (req, res) => {
+app.delete('/api/instituicao/:id', async (req, res) => {
     const { id } = req.params;
     const { data, error } = await supabase
         .from('Instituições')
@@ -61,7 +65,7 @@ app.delete('/instituicao/:id', async (req, res) => {
 });
 
 // ROTA PUT
-app.put('/instituicao/:id', async (req, res) => {
+app.put('/api/instituicao/:id', async (req, res) => {
     const { id } = req.params;
     const { Nome, CNPJ, Endereço, CEP, Telefone } = req.body;
 
