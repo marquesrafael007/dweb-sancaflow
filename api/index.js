@@ -7,9 +7,9 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 const app = express();
 const cors = require('cors');
 
-app.get('/api/instituicao', (req, res) => {
+/*app.get('/api/instituicao', (req, res) => {
     res.json({ message: "Success" });
-});
+});*/
 
 app.get('/', (req, res) => {
     res.send('Bem-vindo ao servidor!');
