@@ -31,7 +31,7 @@
             <div class="form">
                 <form id="formEventos">
                     
-                        <input type="text" id="description" name="name" placeholder="Nome do evento" required>
+                        <input type="text" id="name" name="name" placeholder="Nome do evento" required>
                         <input type="text" id="description" name="description" placeholder="Descrição" maxlength="300" required>
                         <input type="text" id="Address" placeholder="Endereço" required>
                         <input type="text" id="Institution" placeholder="Instituição" required>
@@ -64,8 +64,7 @@
             <!-- Eventos serão inseridos aqui -->
         </tbody>
     </table>     
-</main>
-<script>
+</main><script>
 
 // ==================== CONFIGURAÇÃO ====================
 
@@ -92,6 +91,8 @@ document.getElementById('formEventos').addEventListener('submit', async (e) => {
         valor: parseFloat(document.getElementById('price').value) || 0
     };
 
+    console.log('Enviando:', dados);
+
     try {
 
         const response = await fetch(API_URL, {
@@ -102,8 +103,12 @@ document.getElementById('formEventos').addEventListener('submit', async (e) => {
             body: JSON.stringify(dados)
         });
 
+        const retorno = await response.text();
+
         if (!response.ok) {
-            throw new Error('Erro ao cadastrar evento');
+            console.error(retorno);
+            alert(retorno);
+            return;
         }
 
         alert('Evento cadastrado com sucesso!');
@@ -115,7 +120,7 @@ document.getElementById('formEventos').addEventListener('submit', async (e) => {
     } catch (error) {
 
         console.error(error);
-        alert('Erro ao cadastrar evento');
+        alert('Erro ao conectar com a API');
 
     }
 
@@ -128,13 +133,13 @@ async function carregarEventos() {
 
     try {
 
-        const resposta = await fetch(API_URL);
+        const response = await fetch(API_URL);
 
-        if (!resposta.ok) {
-            throw new Error('Erro ao buscar eventos');
+        if (!response.ok) {
+            throw new Error('Erro ao carregar eventos');
         }
 
-        const eventos = await resposta.json();
+        const eventos = await response.json();
 
         const tbody = document.querySelector('#tabelaEventos tbody');
 
@@ -144,7 +149,8 @@ async function carregarEventos() {
 
             tbody.innerHTML += `
                 <tr>
-                    <td>${evento.id}</td>
+                    <td>${evento.id || ''}</td>
+                    <td>${evento.nome || ''}</td>
                     <td>${evento.descricao || ''}</td>
                     <td>${evento.instituicao || ''}</td>
                     <td>${evento.data_evento || ''}</td>
@@ -164,9 +170,9 @@ async function carregarEventos() {
             `;
         });
 
-    } catch (erro) {
+    } catch (error) {
 
-        console.error('Erro:', erro);
+        console.error(error);
 
     }
 
@@ -177,25 +183,27 @@ async function carregarEventos() {
 
 async function editarEvento(id) {
 
-    const descricao = prompt('Nova descrição:');
-    if (descricao === null) return;
+    const nome = prompt('Nome do evento:');
+    if (nome === null) return;
 
-    const endereco = prompt('Novo endereço:');
-    const instituicao = prompt('Nova instituição:');
-    const responsaveis_evento = prompt('Novos responsáveis:');
-    const contato = prompt('Novo contato:');
-    const data_evento = prompt('Nova data (AAAA-MM-DD):');
-    const hora_evento = prompt('Novo horário (HH:MM):');
-    const valor = prompt('Novo valor:');
+    const descricao = prompt('Descrição:');
+    const endereco = prompt('Endereço:');
+    const instituicao = prompt('Instituição:');
+    const responsaveis_evento = prompt('Responsáveis:');
+    const contato = prompt('Contato:');
+    const data_evento = prompt('Data (AAAA-MM-DD):');
+    const hora_evento = prompt('Horário (HH:MM):');
+    const valor = prompt('Valor:');
 
     try {
 
-        const resposta = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${API_URL}/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                nome,
                 descricao,
                 endereco,
                 instituicao,
@@ -207,17 +215,21 @@ async function editarEvento(id) {
             })
         });
 
-        if (!resposta.ok) {
-            throw new Error('Erro ao atualizar evento');
+        const retorno = await response.text();
+
+        if (!response.ok) {
+            console.error(retorno);
+            alert(retorno);
+            return;
         }
 
         alert('Evento atualizado com sucesso!');
 
         carregarEventos();
 
-    } catch (erro) {
+    } catch (error) {
 
-        console.error(erro);
+        console.error(error);
         alert('Erro ao atualizar evento');
 
     }
@@ -233,27 +245,29 @@ async function excluirEvento(id) {
         'Deseja realmente excluir este evento?'
     );
 
-    if (!confirmar) {
-        return;
-    }
+    if (!confirmar) return;
 
     try {
 
-        const resposta = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${API_URL}/${id}`, {
             method: 'DELETE'
         });
 
-        if (!resposta.ok) {
-            throw new Error('Erro ao excluir evento');
+        const retorno = await response.text();
+
+        if (!response.ok) {
+            console.error(retorno);
+            alert(retorno);
+            return;
         }
 
         alert('Evento excluído com sucesso!');
 
         carregarEventos();
 
-    } catch (erro) {
+    } catch (error) {
 
-        console.error(erro);
+        console.error(error);
         alert('Erro ao excluir evento');
 
     }
