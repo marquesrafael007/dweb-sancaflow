@@ -10,7 +10,49 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
+// ============ Funções ===========================================
+async function inserirTabela(nomeTabela, dados){ 
+    const { data, error } = await supabase
+        .from(nomeTabela)
+        .insert([dados]);
+    if (error) throw error;
 
+    return data;
+}
+
+async function lerTabela(nomeTabela){
+ const { data, error } = await supabase
+            .from(nomeTabela)
+            .select('*');
+
+        if (error) throw error;
+	return data;
+}
+
+async function atualizarTabela(nomeTabela, id, novosDados){
+ const { data, error } = await supabase
+        .from(nomeTabela)
+        .update(novosDados)
+        .eq('id', id)
+        .select();
+
+    if (error) throw error;
+
+    return data;
+}
+
+async function deletarTabela(nomeTabela, id){
+const { data, error } = await supabase
+        .from(nomeTabela)
+        .delete()
+        .eq('id', id)
+        .select();
+
+    if (error) throw error;
+
+    return data;
+}
+//=================================================================
 
 // Router para API
 const apiRouter = express.Router();
@@ -93,5 +135,64 @@ if (require.main === module) {
         console.log(`Servidor rodando em http://localhost:${PORT}`);
     });
 }
+// ============== Eventos =========================
+//-------------------CREATE ------------------------
+apiRouter.post('/eventos', async(req, res) => {
+try {
+    const resultado = await inserirTabela(
+        'eventos',
+        req.body
+    );
+    res.status(201).json(resultado);
+} catch (e) {
+    res.status(500).json({error: e.message});
+}
+});
+//------------------ READ --------------------------
+apiRouter.get('/eventos', async (req, res) => {
+    try {
+        const dados = await lerTabela('eventos');
+        res.status(200).json(dados);
+    } catch (e) {
+        console.log("Erro ao carregar eventos:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+//----------------- UPDATE -------------------------
+apiRouter.put('/eventos/:id', async (req, res) => {
+    try {
+        const resultado = await atualizarTabela(
+            'eventos',
+            req.params.id,
+            req.body
+        );
 
+        res.status(200).json(resultado);
+
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+//----------------- DELETE ------------------------
+apiRouter.delete('/eventos/:id', async (req, res) => {
+    try {
+        const resultado = await deletarTabela(
+            'eventos',
+            req.params.id
+        );
+
+        res.status(200).json({
+            message: 'Evento excluído com sucesso!',
+            data: resultado
+        });
+
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+// ================================================
 module.exports = app;

@@ -24,18 +24,14 @@
 </head>
 
 <body>
+    
     <main>
         <div class="text"><h1>Novo evento</h1></div>
 
             <div class="form">
-                <form action="#" method="post">
+                <form id="formEventos">
                     
-                    <label class="upload-box" for="img" >
-                        Adicionar imagem:
-                        <img id="preview" src="" hidden>
-                    </label>
-
-                        <input type="file" id="img" hidden> 
+     
                         <input type="text" id="description" name="description" placeholder="Descrição" maxlength="300" required>
                         <input type="text" id="Address" placeholder="Endereço" required>
                         <input type="text" id="Institution" placeholder="Instituição" required>
@@ -49,8 +45,226 @@
                 
                 </form>
             </div>
+		<h2>Eventos Cadastrados</h2>
 
-     </main>
+<table id="tabelaEventos">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Instituição</th>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Contato</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+        <tbody>
+            <!-- Eventos serão inseridos aqui -->
+        </tbody>
+    </table>     
+</main>
+<script>
+
+// ==================== CONFIGURAÇÃO ====================
+
+const API_URL = window.location.origin.includes('localhost')
+    ? 'http://localhost:3000/api/eventos'
+    : '/api/eventos';
+
+
+// ==================== INSERT ====================
+
+document.getElementById('formEventos').addEventListener('submit', async (e) => {
+
+    e.preventDefault();
+
+    const dados = {
+        descricao: document.getElementById('description').value,
+        endereco: document.getElementById('Address').value,
+        instituicao: document.getElementById('Institution').value,
+        responsaveis_evento: document.getElementById('responsible').value,
+        contato: document.getElementById('contact').value,
+        data_evento: document.getElementById('date').value,
+        hora_evento: document.getElementById('time').value,
+        valor: parseFloat(document.getElementById('price').value) || 0
+    };
+
+    try {
+
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dados)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao cadastrar evento');
+        }
+
+        alert('Evento cadastrado com sucesso!');
+
+        document.getElementById('formEventos').reset();
+
+        carregarEventos();
+
+    } catch (error) {
+
+        console.error(error);
+        alert('Erro ao cadastrar evento');
+
+    }
+
+});
+
+
+// ==================== SELECT ====================
+
+async function carregarEventos() {
+
+    try {
+
+        const resposta = await fetch(API_URL);
+
+        if (!resposta.ok) {
+            throw new Error('Erro ao buscar eventos');
+        }
+
+        const eventos = await resposta.json();
+
+        const tbody = document.querySelector('#tabelaEventos tbody');
+
+        tbody.innerHTML = '';
+
+        eventos.forEach(evento => {
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${evento.id}</td>
+                    <td>${evento.descricao || ''}</td>
+                    <td>${evento.instituicao || ''}</td>
+                    <td>${evento.data_evento || ''}</td>
+                    <td>${evento.hora_evento || ''}</td>
+                    <td>${evento.contato || ''}</td>
+
+                    <td>
+                        <button onclick="editarEvento(${evento.id})">
+                            Editar
+                        </button>
+
+                        <button onclick="excluirEvento(${evento.id})">
+                            Excluir
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (erro) {
+
+        console.error('Erro:', erro);
+
+    }
+
+}
+
+
+// ==================== UPDATE ====================
+
+async function editarEvento(id) {
+
+    const descricao = prompt('Nova descrição:');
+    if (descricao === null) return;
+
+    const endereco = prompt('Novo endereço:');
+    const instituicao = prompt('Nova instituição:');
+    const responsaveis_evento = prompt('Novos responsáveis:');
+    const contato = prompt('Novo contato:');
+    const data_evento = prompt('Nova data (AAAA-MM-DD):');
+    const hora_evento = prompt('Novo horário (HH:MM):');
+    const valor = prompt('Novo valor:');
+
+    try {
+
+        const resposta = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                descricao,
+                endereco,
+                instituicao,
+                responsaveis_evento,
+                contato,
+                data_evento,
+                hora_evento,
+                valor
+            })
+        });
+
+        if (!resposta.ok) {
+            throw new Error('Erro ao atualizar evento');
+        }
+
+        alert('Evento atualizado com sucesso!');
+
+        carregarEventos();
+
+    } catch (erro) {
+
+        console.error(erro);
+        alert('Erro ao atualizar evento');
+
+    }
+
+}
+
+
+// ==================== DELETE ====================
+
+async function excluirEvento(id) {
+
+    const confirmar = confirm(
+        'Deseja realmente excluir este evento?'
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+
+        const resposta = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!resposta.ok) {
+            throw new Error('Erro ao excluir evento');
+        }
+
+        alert('Evento excluído com sucesso!');
+
+        carregarEventos();
+
+    } catch (erro) {
+
+        console.error(erro);
+        alert('Erro ao excluir evento');
+
+    }
+
+}
+
+
+// ==================== INICIALIZAÇÃO ====================
+
+carregarEventos();
+
+</script>
 </body>
 </html>
 
