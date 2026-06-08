@@ -253,4 +253,65 @@ apiRouter.delete('/locais/:id', async (req, res) => {
 });
 // ================================================
 
+// =================Usuarios==========================
+//-------------------CREATE ------------------------
+apiRouter.post('/usuarios', async(req, res) => {
+try {
+    const resultado = await inserirTabela(
+        'usuarios',
+        req.body
+    );
+    res.status(201).json(resultado);
+} catch (e) {
+    res.status(500).json({error: e.message});
+}
+});
+//------------------ READ --------------------------
+apiRouter.get('/usuarios', async (req, res) => {
+    try {
+        const dados = await lerTabela('usuarios');
+        res.status(200).json(dados);
+    } catch (e) {
+        console.log("Erro ao carregar usuários:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+//----------------- UPDATE -------------------------
+apiRouter.put('/usuarios/:id', async (req, res) => {
+    try {
+        const resultado = await atualizarTabela(
+            'usuarios',
+            req.params.id,
+            req.body
+        );
+
+        res.status(200).json(resultado);
+
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+//----------------- DELETE ------------------------
+apiRouter.delete('/usuarios/:id', async (req, res) => {
+    try {
+        const resultado = await deletarTabela(
+            'usuarios',
+            req.params.id
+        );
+
+        res.status(200).json({
+            message: 'Usuário excluído com sucesso!',
+            data: resultado
+        });
+
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+//================================================
+
 module.exports = app;
