@@ -315,3 +315,64 @@ apiRouter.delete('/usuarios/:id', async (req, res) => {
 //================================================
 
 module.exports = app;
+
+// ============== Professores =========================
+//-------------------CREATE ------------------------
+apiRouter.post('/professores', async(req, res) => {
+try {
+    const resultado = await inserirTabela(
+        'professores',
+        req.body
+    );
+    res.status(201).json(resultado);
+} catch (e) {
+    res.status(500).json({error: e.message});
+}
+});
+//------------------ READ --------------------------
+apiRouter.get('/professores', async (req, res) => {
+    try {
+        const dados = await lerTabela('professores');
+        res.status(200).json(dados);
+    } catch (e) {
+        console.log("Erro ao carregar professores:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+//----------------- UPDATE -------------------------
+apiRouter.put('/professores/:id', async (req, res) => {
+    try {
+        const resultado = await atualizarTabela(
+            'professores',
+            req.params.id,
+            req.body
+        );
+
+        res.status(200).json(resultado);
+
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+//----------------- DELETE ------------------------
+apiRouter.delete('/professores/:id', async (req, res) => {
+    try {
+        const resultado = await deletarTabela(
+            'professores',
+            req.params.id
+        );
+
+        res.status(200).json({
+            message: 'Professor excluído com sucesso!',
+            data: resultado
+        });
+
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+// ================================================
