@@ -195,4 +195,62 @@ apiRouter.delete('/eventos/:id', async (req, res) => {
     }
 });
 // ================================================
+
+// ============== Locais ==========================
+//-------------------CREATE ------------------------
+apiRouter.post('/locais', async(req, res) => {
+    try {
+        const resultado = await inserirTabela(
+            'locais',
+            req.body
+        );
+        res.status(201).json(resultado);
+    } catch (e) {
+        res.status(500).json({error: e.message});
+    }
+});
+//------------------ READ --------------------------
+apiRouter.get('/locais', async (req, res) => {
+    try {
+        const dados = await lerTabela('locais');
+        res.status(200).json(dados);
+    } catch (e) {
+        console.log("Erro ao carregar locais:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+//----------------- UPDATE -------------------------
+apiRouter.put('/locais/:id', async (req, res) => {
+    try {
+        const resultado = await atualizarTabela(
+            'locais',
+            req.params.id,
+            req.body
+        );
+        res.status(200).json(resultado);
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+//----------------- DELETE ------------------------
+apiRouter.delete('/locais/:id', async (req, res) => {
+    try {
+        const resultado = await deletarTabela(
+            'locais',
+            req.params.id
+        );
+        res.status(200).json({
+            message: 'Local excluído com sucesso!',
+            data: resultado
+        });
+    } catch (e) {
+        res.status(500).json({
+            error: e.message
+        });
+    }
+});
+// ================================================
+
 module.exports = app;

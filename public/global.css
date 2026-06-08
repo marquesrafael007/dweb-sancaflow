@@ -1,72 +1,79 @@
-*{
+* {
     margin: 0 auto;
     padding: 0px;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-header{
+header {
     padding: 12px;
 }
-nav{
+
+nav {
     padding: 12px;
     background-color: #019DFF;
     border-radius: 16px;
 }
-ul{
+
+ul {
     display: flex;
     flex-direction: row;
     align-items: center;
     list-style: none;
 }
-li{
+
+li {
     font-size: 18px;
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
-a{
+
+a {
     text-decoration: none;
     color: aliceblue;
 }
-main{
+
+main {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 56px
-    ;
+    gap: 56px;
 }
-iframe{
+
+iframe {
     border: none;
     width: 100vw;
     height: 100vh;
     padding: 20px;
 }
 
-h1{
+h1 {
     font-family: Arial, Helvetica, sans-serif;
     size: 36px;
 }
 
-.form{
+.form {
     width: 60vw;
     padding: 24px;
     border-radius: 16px;
     background-color: orange;
 }
 
-form{
+form {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-input{
+
+input {
     width: 100%;
     padding: 12px;
     box-sizing: border-box;
     border: 1px solid #019DFF;
     border-radius: 16px;
 }
-.submit{
+
+.submit {
     background-color: #019DFF;
     color: #fff;
     width: 100%;
@@ -87,13 +94,15 @@ table {
 }
 
 thead tr {
-    background-color: #009dff; /* O azul do seu botão Enviar */
+    background-color: #009dff;
+    /* O azul do seu botão Enviar */
     color: #ffffff;
     text-align: left;
     font-weight: bold;
 }
 
-th, td {
+th,
+td {
     padding: 12px 15px;
 }
 
@@ -104,10 +113,14 @@ tbody tr {
 tbody tr:nth-of-type(even) {
     background-color: #f3f3f3;
 }
-tbody tr:last-of-type { border-bottom: 2px solid #009dff;
+
+tbody tr:last-of-type {
+    border-bottom: 2px solid #009dff;
 }
 
 /* Efeito de destaque ao passar o mouse */
 tbody tr:hover {
-    background-color: #fdf2e2; /* Um laranja bem clarinho */
+    background-color: #fdf2e2;
+    /* Um laranja bem clarinho */
 
+}

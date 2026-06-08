@@ -12,52 +12,222 @@
             <h1>Locais</h1>
         </div>
         <div class="form">
-            <form action="#" method="post">
-                <input type="text" placeholder="Nome do Local">
-                <input type="text" id="rua" placeholder="Rua">
-                <input type="number" placeholder="Nº">
-                <input type="text" id="bairro" placeholder="Bairro">
-                <input type="text" id="cidade" placeholder="Cidade">
-                <input type="text" id="cep" placeholder="CEP">
+            <form id="formLocais">
+                <input type="text" id="nome" placeholder="Nome do Local" required>
+                <input type="text" id="rua" placeholder="Rua" required>
+                <input type="number" id="numero" placeholder="Nº" required>
+                <input type="text" id="bairro" placeholder="Bairro" required>
+                <input type="text" id="cidade" placeholder="Cidade" required>
+                <input type="text" id="cep" placeholder="CEP" required>
 
                 <input class="submit" type="submit" value="Enviar">
                 <input class="submit" type="reset" value="Limpar">
             </form>
         </div>
         <div class="table">
-            <table>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
-                <tr></tr>
+            <table id="tabelaLocais">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Rua</th>
+                        <th>Nº</th>
+                        <th>Bairro</th>
+                        <th>Cidade</th>
+                        <th>CEP</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão carregados aqui -->
+                </tbody>
             </table>
         </div>
     </main>
     <script>
-
-        document.getElementById("cep").addEventListener("blur", function() { //Evento ao clicar fora na tela
-        
-            let cep = this.value.replace(/\D/g, '') // Pega o valor do Cep Digitado
-
-            if(cep.lenght !== 8){
-                alert("CEP INVÁLIDO")
-                return
+        // ViaCEP CEP auto-completion on blur
+        document.getElementById("cep").addEventListener("blur", function() {
+            let cep = this.value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) {
+                alert("CEP INVÁLIDO");
+                return;
             }
 
-
-        
             fetch(`https://viacep.com.br/ws/${cep}/json/`)
             .then(response => response.json())
             .then(data => {
-        
-                document.getElementById("rua").value = data.logradouro;
-                document.getElementById("bairro").value = data.bairro; 
-                document.getElementById("cidade").value = data.localidade;
+                if (data.erro) {
+                    alert("CEP não encontrado");
+                    return;
+                }
+                document.getElementById("rua").value = data.logradouro || '';
+                document.getElementById("bairro").value = data.bairro || ''; 
+                document.getElementById("cidade").value = data.localidade || '';
+            })
+            .catch(error => {
+                console.error("Erro ao consultar o CEP:", error);
             });
-        
         });
-        
-        </script>
+
+        // ==================== CONFIGURAÇÃO ====================
+        const API_URL = window.location.origin.includes('localhost')
+            ? 'http://localhost:3000/api/locais'
+            : '/api/locais';
+
+        // ==================== INSERT ====================
+        document.getElementById('formLocais').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const dados = {
+                nome: document.getElementById('nome').value,
+                rua: document.getElementById('rua').value,
+                numero: document.getElementById('numero').value,
+                bairro: document.getElementById('bairro').value,
+                cidade: document.getElementById('cidade').value,
+                cep: document.getElementById('cep').value
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await response.text();
+
+                if (!response.ok) {
+                    alert(resultado);
+                    console.error(resultado);
+                    return;
+                }
+
+                alert('Local cadastrado com sucesso!');
+                document.getElementById('formLocais').reset();
+                carregarLocais();
+
+            } catch (error) {
+                console.error(error);
+                alert('Erro ao conectar com a API');
+            }
+        });
+
+        // ==================== SELECT ====================
+        async function carregarLocais() {
+            try {
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar locais');
+                }
+
+                const locais = await response.json();
+                const tbody = document.querySelector('#tabelaLocais tbody');
+                tbody.innerHTML = '';
+
+                locais.forEach(local => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${local.id || ''}</td>
+                            <td>${local.nome || ''}</td>
+                            <td>${local.rua || ''}</td>
+                            <td>${local.numero || ''}</td>
+                            <td>${local.bairro || ''}</td>
+                            <td>${local.cidade || ''}</td>
+                            <td>${local.cep || ''}</td>
+                            <td>
+                                <button onclick="editarLocal(${local.id})">
+                                    Editar
+                                </button>
+                                <button onclick="excluirLocal(${local.id})">
+                                    Excluir
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // ==================== UPDATE ====================
+        async function editarLocal(id) {
+            const nome = prompt('Nome do local:');
+            if (nome === null) return;
+
+            const rua = prompt('Rua:');
+            const numero = prompt('Nº:');
+            const bairro = prompt('Bairro:');
+            const cidade = prompt('Cidade:');
+            const cep = prompt('CEP:');
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nome,
+                        rua,
+                        numero,
+                        bairro,
+                        cidade,
+                        cep
+                    })
+                });
+
+                const resultado = await response.text();
+
+                if (!response.ok) {
+                    alert(resultado);
+                    console.error(resultado);
+                    return;
+                }
+
+                alert('Local atualizado com sucesso!');
+                carregarLocais();
+
+            } catch (error) {
+                console.error(error);
+                alert('Erro ao atualizar local');
+            }
+        }
+
+        // ==================== DELETE ====================
+        async function excluirLocal(id) {
+            const confirmar = confirm('Deseja realmente excluir este local?');
+            if (!confirmar) return;
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const resultado = await response.text();
+
+                if (!response.ok) {
+                    alert(resultado);
+                    console.error(resultado);
+                    return;
+                }
+
+                alert('Local excluído com sucesso!');
+                carregarLocais();
+
+            } catch (error) {
+                console.error(error);
+                alert('Erro ao excluir local');
+            }
+        }
+
+        // ==================== INICIALIZAÇÃO ====================
+        carregarLocais();
+    </script>
 </body>
 </html>
