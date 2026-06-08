@@ -16,8 +16,8 @@
         <div class="form">
             <form id="formUsuario">
                 <input type="text" id="nome" placeholder="Nome Completo" required>
+                <input type="text" id="cpf" placeholder="CPF" required>
                 <input type="email" id="email" placeholder="E-mail" required>
-                <input type="text" id="cargo" placeholder="Cargo/Função" required>
                 <input class="submit" type="submit" value="Cadastrar">
             </form>
 
@@ -25,8 +25,8 @@
                 <thead>
                     <tr>
                         <th>Nome</th>
+                        <th>CPF</th>
                         <th>E-mail</th>
-                        <th>Cargo</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -38,34 +38,196 @@
     </main>
 
     <script>
-        // Placeholder para lógica de API futura
-        console.log("Página de usuários carregada.");
-        
-        // Exemplo de preenchimento da tabela para visualização
-        const corpoTabela = document.getElementById('corpoTabela');
-        const usuariosExemplo = [
-            { nome: "Usuário Exemplo", email: "exemplo@sancaflow.com", cargo: "Administrador" }
-        ];
+        // ==================== CONFIGURAÇÃO ====================
 
-        usuariosExemplo.forEach(u => {
-            const linha = `
+        const API_URL = window.location.origin.includes('localhost')
+            ? 'http://localhost:3000/api/usuarios'
+            : '/api/usuarios';
+
+
+        // ==================== CREATE ====================
+
+        document.getElementById('formUsuario').addEventListener('submit', async (e) => {
+
+            e.preventDefault();
+
+            const dados = {
+                nome: document.getElementById('nome').value,
+                cpf: document.getElementById('cpf').value,
+                email: document.getElementById('email').value
+            };
+
+            try {
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                if (!response.ok) {
+                    alert('Erro ao cadastrar usuário');
+                    return;
+                }
+
+                alert('Usuário cadastrado com sucesso!');
+
+                document.getElementById('formUsuario').reset();
+
+                carregarUsuarios();
+
+            } catch (error) {
+
+                console.error(error);
+                alert('Erro ao conectar com a API');
+
+            }
+
+        });
+
+        // ==================== READ ====================
+
+        async function carregarUsuarios() {
+
+            try {
+
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar usuários');
+                }
+
+                const usuarios = await response.json();
+
+                const corpoTabela = document.getElementById('corpoTabela');
+
+                corpoTabela.innerHTML = '';
+
+                usuarios.forEach(usuario => {
+
+                    corpoTabela.innerHTML += `
                 <tr>
-                    <td>${u.nome}</td>
-                    <td>${u.email}</td>
-                    <td>${u.cargo}</td>
+
+                    <td>${usuario.nome || ''}</td>
+                    <td>${usuario.cpf || ''}</td>
+                    <td>${usuario.email || ''}</td>
+
                     <td>
-                        <button style="background: #ffc107;">Editar</button>
-                        <button style="background: #dc3545; color: white;">Excluir</button>
+                       <button onclick="editarUsuario(${usuario.id})"
+                        style="background: #ffc107; border:none; border-radius:5px;">
+                            Editar
+                        </button>
+
+                        <button onclick="excluirUsuario(${usuario.id})"
+                        style="background: #dc3545; color:white; border:none; border-radius:5px;">
+                            Excluir
+                        </button>
                     </td>
                 </tr>
             `;
-            corpoTabela.innerHTML += linha;
-        });
 
-        document.getElementById('formUsuario').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Funcionalidade de cadastro será implementada com a API.');
-        });
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+        // ==================== UPDATE ====================
+
+        async function editarUsuario(id) {
+
+            const nome = prompt('Novo nome:');
+            if (nome === null) return;
+
+            const cpf = prompt('Novo CPF:');
+            const email = prompt('Novo e-mail:');
+
+            try {
+
+                const response = await fetch(`${API_URL}/${id}`, {
+
+                    method: 'PUT',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        nome,
+                        cpf,
+                        email
+                    })
+
+                });
+
+                if (!response.ok) {
+
+                    alert('Erro ao atualizar usuário');
+                    return;
+
+                }
+
+                alert('Usuário atualizado com sucesso!');
+
+                carregarUsuarios();
+
+            } catch (error) {
+
+                console.error(error);
+                alert('Erro ao atualizar usuário');
+
+            }
+
+        }
+
+
+        // ==================== DELETE ====================
+
+        async function excluirUsuario(id) {
+
+            const confirmar = confirm(
+                'Deseja realmente excluir este usuário?'
+            );
+
+            if (!confirmar) return;
+
+            try {
+
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+
+                    alert('Erro ao excluir usuário');
+                    return;
+
+                }
+
+                alert('Usuário excluído com sucesso!');
+
+                carregarUsuarios();
+
+            } catch (error) {
+
+                console.error(error);
+                alert('Erro ao excluir usuário');
+
+            }
+
+        }
+
+
+        // ==================== INICIALIZAÇÃO ====================
+
+        carregarUsuarios();
+
     </script>
 </body>
 
