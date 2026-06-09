@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SancaFlow</title>
     <link rel="stylesheet" href="css/global.css">
 </head>
+
 <body>
     <main>
         <div class="text">
@@ -43,8 +45,7 @@
             const dados = {
                 nome: document.getElementById('nome').value,
                 cpf: document.getElementById('cpf').value,
-                data: document.getElementById('data').value,
-
+                data: document.getElementById('data').value
             };
 
             try {
@@ -65,7 +66,9 @@
                 }
 
                 alert('Professor cadastrado com sucesso!');
-                document.getElementById('formsprofessor').reset();
+
+                document.getElementById('formsprofessores').reset();
+
                 carregarProfessores();
 
             } catch (error) {
@@ -84,27 +87,33 @@
                 }
 
                 const professores = await response.json();
+
                 const tbody = document.querySelector('#professores tbody');
+
+                if (!tbody) {
+                    console.error('Tabela #professores não encontrada');
+                    return;
+                }
+
                 tbody.innerHTML = '';
 
-                professores.forEach(professores => {
+                professores.forEach(professor => {
                     tbody.innerHTML += `
-                        <tr>
-                            <td>${professores.id || ''}</td>
-                            <td>${professores.nome || ''}</td>
-                            <td>${professores.cpf || ''}</td>
-                            <td>${professores.data || ''}</td>
-
-                            <td>
-                                <button onclick="editarProfessores(${professores.id})">
-                                    Editar
-                                </button>
-                                <button onclick="excluirProfessores(${professores.id})">
-                                    Excluir
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+                <tr>
+                    <td>${professor.id || ''}</td>
+                    <td>${professor.nome || ''}</td>
+                    <td>${professor.cpf || ''}</td>
+                    <td>${professor.data || ''}</td>
+                    <td>
+                        <button onclick="editarProfessores(${professor.id})">
+                            Editar
+                        </button>
+                        <button onclick="excluirProfessores(${professor.id})">
+                            Excluir
+                        </button>
+                    </td>
+                </tr>
+            `;
                 });
 
             } catch (error) {
@@ -117,9 +126,11 @@
             const nome = prompt('Nome do professor:');
             if (nome === null) return;
 
-            const cpf = prompt('Cpf:');
-            const data = prompt('Data de nascimento:');
+            const cpf = prompt('CPF:');
+            if (cpf === null) return;
 
+            const data = prompt('Data de nascimento (AAAA-MM-DD):');
+            if (data === null) return;
 
             try {
                 const response = await fetch(`${API_URL}/${id}`, {
@@ -130,7 +141,7 @@
                     body: JSON.stringify({
                         nome,
                         cpf,
-                        data,
+                        data
                     })
                 });
 
@@ -142,18 +153,20 @@
                     return;
                 }
 
-                alert('Professores atualizado com sucesso!');
+                alert('Professor atualizado com sucesso!');
+
                 carregarProfessores();
 
             } catch (error) {
                 console.error(error);
-                alert('Erro ao atualizar professores');
+                alert('Erro ao atualizar professor');
             }
         }
 
         // ==================== DELETE ====================
         async function excluirProfessores(id) {
             const confirmar = confirm('Deseja realmente excluir este cadastro?');
+
             if (!confirmar) return;
 
             try {
@@ -170,6 +183,7 @@
                 }
 
                 alert('Cadastro excluído com sucesso!');
+
                 carregarProfessores();
 
             } catch (error) {
@@ -182,5 +196,5 @@
         carregarProfessores();
     </script>
 </body>
-</html>
 
+</html>
